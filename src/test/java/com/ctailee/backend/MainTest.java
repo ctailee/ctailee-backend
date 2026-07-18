@@ -1,6 +1,5 @@
 package com.ctailee.backend;
 
-import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,7 +25,7 @@ public class MainTest {
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(
-                jsonPath("$.status").value("ok")
+                jsonPath("$.message").value("ok")
         );
     }
 }

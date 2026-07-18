@@ -20,7 +20,7 @@ public class Main {
     @GetMapping("/health")
     public Map<String, String> healthCheck(){
         Map<String, String> response = Map.of(
-                "status", "ok"
+                "message", "ok"
         );
 
         return response;
