@@ -15,9 +15,9 @@ public class CorsConfig {
                 // 哪些後端 API 路徑要套用這份 CORS 設定。/** 代表所有路徑。
                 registry.addMapping("/**")
                         .allowedOrigins(
+                                "http://127.0.0.1:5173",
                                 "http://localhost:5173",
-                                "https://ctailee.com",
-                                "https://api.ctailee.com"
+                                "https://ctailee.com"
                         )
                         .allowedMethods(
                                 "GET",
