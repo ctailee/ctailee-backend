@@ -33,11 +33,6 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.ctailee</groupId>
-            <artifactId>text-cipher</artifactId>
-            <version>1.0.0</version>
-        </dependency>
     </dependencies>
 
     <build>

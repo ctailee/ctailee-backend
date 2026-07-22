@@ -1,6 +1,6 @@
 package com.ctailee.backend.project.service;
 
-import com.ctailee.textcipher.Pbkdf2AesGcmTextEncryptor;
+import com.ctailee.backend.project.textcipher.Pbkdf2AesGcmTextEncryptor;
 
 public class TextCipherService {
 

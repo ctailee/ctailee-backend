@@ -1,7 +1,7 @@
 package com.ctailee.backend.project.controller;
 
 import com.ctailee.backend.project.dto.response.ApiErrorResponse;
-import com.ctailee.textcipher.EncryptionException;
+import com.ctailee.backend.project.textcipher.EncryptionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
