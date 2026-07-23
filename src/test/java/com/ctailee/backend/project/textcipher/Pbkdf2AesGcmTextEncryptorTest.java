@@ -3,6 +3,7 @@ package com.ctailee.backend.project.textcipher;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,13 +81,16 @@ class Pbkdf2AesGcmTextEncryptorTest {
 
         try {
             String encrypted = encryptor.encrypt(password, "secret");
+            String[] parts = encrypted.split("\\.", -1);
 
-            char replacement = encrypted.endsWith("A") ? 'B' : 'A';
+            byte[] ciphertext = Base64.getUrlDecoder().decode(parts[5]);
+            ciphertext[ciphertext.length - 1] ^= 0x01;
 
-            String modified = encrypted.substring(
-                0,
-                encrypted.length() - 1
-            ) + replacement;
+            parts[5] = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(ciphertext);
+
+            String modified = String.join(".", parts);
 
             assertThrows(
                 EncryptionException.class,
