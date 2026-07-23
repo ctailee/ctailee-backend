@@ -4,6 +4,8 @@ services:
   app:
     image: ghcr.io/ctailee/ctailee-backend:latest
 
+    pull_policy: always
+
     ports:
       - "8080:8080"
 
