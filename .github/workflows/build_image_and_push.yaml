@@ -59,14 +59,14 @@ jobs:
 
       - name: Build image
         run: |
-          docker build 
-          -t $commitImage
-          -t $versionImage
-          -t $latestImage
+          docker build \
+          -t ${{ steps.metadata.outputs.commitImage }} \
+          -t ${{ steps.metadata.outputs.versionImage }} \
+          -t ${{ steps.metadata.outputs.latestImage }} \
           .
 
       - name: Push image
         run: |
-          docker push $commitImage
-          docker push $versionImage
-          docker push $latestImage
+          docker push ${{ steps.metadata.outputs.commitImage }}
+          docker push ${{ steps.metadata.outputs.versionImage }}
+          docker push ${{ steps.metadata.outputs.latestImage }}
