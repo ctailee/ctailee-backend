@@ -1,0 +1,16 @@
+name: ctailee-backend
+
+services:
+  app:
+    image: ghcr.io/ctailee/ctailee-backend:latest
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - sqlite-volume:/app/data
+
+    restart: unless-stopped
+
+volumes:
+  sqlite-volume:

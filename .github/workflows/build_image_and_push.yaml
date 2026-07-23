@@ -45,9 +45,10 @@ jobs:
           )
           
           git_commit=${GITHUB_SHA::7}
-          
-          echo "image_name=${artifactId}" >> ${GITHUB_OUTPUT}
-          echo "image_tag=${version}-${git_commit}" >> ${GITHUB_OUTPUT}
+                 
+          echo "commitImage=ghcr.io/${{github.repository_owner}}/${artifactId}:${git_commit}" >> ${GITHUB_OUTPUT}
+          echo "versionImage=ghcr.io/${{github.repository_owner}}/${artifactId}:${version}" >> ${GITHUB_OUTPUT}
+          echo "latestImage=ghcr.io/${{github.repository_owner}}/${artifactId}:latest" >> ${GITHUB_OUTPUT}
 
       - name: Login to GHCR
         uses: docker/login-action@v4
@@ -57,7 +58,15 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
-        run: docker build -t "ghcr.io/${{github.repository_owner}}/${{steps.metadata.outputs.image_name}}:${{ steps.metadata.outputs.image_tag }}" .
+        run: |
+          docker build 
+          -t $commitImage
+          -t $versionImage
+          -t $latestImage
+          .
 
       - name: Push image
-        run: docker push "ghcr.io/${{github.repository_owner}}/${{steps.metadata.outputs.image_name}}:${{ steps.metadata.outputs.image_tag }}"
+        run: |
+          docker push $commitImage
+          docker push $versionImage
+          docker push $latestImage
