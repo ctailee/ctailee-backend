@@ -4,7 +4,6 @@ import com.ctailee.backend.project.entity.ShortUrlEntity;
 import com.ctailee.backend.project.service.ShortUrlService;
 import com.ctailee.backend.project.service.TextCipherService;
 import com.ctailee.backend.project.textcipher.EncryptionException;
-import com.ctailee.backend.project.urlshortener.ShortCodeNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -178,60 +177,4 @@ public class ProjectControllerTest {
                         .value("Original URL can't be empty"));
     }
 
-    @Test
-    public void getOriginalUrl_returnsOriginalUrl_whenShortCodeExists() throws Exception {
-        when(shortUrlService.getOriginalUrl("Ab12Cd3"))
-                .thenReturn("https://ctailee.com/");
-
-        mockMvc.perform(
-                post("/project/shorturl/getOriginalUrl")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "shortCode": "Ab12Cd3"
-                                }
-                                """)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.originalUrl").value("https://ctailee.com/"));
-
-        verify(shortUrlService).getOriginalUrl("Ab12Cd3");
-    }
-
-    @Test
-    public void getOriginalUrl_returnsNotFound_whenShortCodeDoesNotExist() throws Exception {
-        when(shortUrlService.getOriginalUrl("missing"))
-                .thenThrow(new ShortCodeNotFoundException("missing"));
-
-        mockMvc.perform(
-                post("/project/shorturl/getOriginalUrl")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "shortCode": "missing"
-                                }
-                                """)
-        )
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message")
-                        .value("Short code not found: missing"));
-    }
-
-    @Test
-    public void getOriginalUrl_returnsBadRequest_whenShortCodeIsBlank() throws Exception {
-        mockMvc.perform(
-                post("/project/shorturl/getOriginalUrl")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "shortCode": ""
-                                }
-                                """)
-        )
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Request validation failed"))
-                .andExpect(jsonPath("$.errors.shortCode")
-                        .value("Short code can't be empty"));
-    }
 }

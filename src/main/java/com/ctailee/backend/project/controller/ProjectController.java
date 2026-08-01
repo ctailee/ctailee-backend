@@ -1,17 +1,19 @@
 package com.ctailee.backend.project.controller;
 
-import com.ctailee.backend.project.dto.request.GetOriginalUrlRequest;
 import com.ctailee.backend.project.dto.request.ShortenUrlRequest;
 import com.ctailee.backend.project.dto.request.TextCipherDecryptRequest;
 import com.ctailee.backend.project.dto.request.TextCipherEncryptRequest;
-import com.ctailee.backend.project.dto.response.GetOriginalUrlResponse;
 import com.ctailee.backend.project.dto.response.ShortenUrlResponse;
 import com.ctailee.backend.project.dto.response.TextCipherDecryptResponse;
 import com.ctailee.backend.project.dto.response.TextCipherEncryptResponse;
 import com.ctailee.backend.project.service.ShortUrlService;
 import com.ctailee.backend.project.service.TextCipherService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/project")
@@ -61,12 +63,15 @@ public class ProjectController {
         return new ShortenUrlResponse(shortCode);
     }
 
-    @PostMapping("/shorturl/getOriginalUrl")
-    public GetOriginalUrlResponse getOriginalUrl(
-            @Valid @RequestBody GetOriginalUrlRequest request
+    @GetMapping("/shorturl/{shortCode}")
+    public ResponseEntity redirect(
+            @PathVariable String shortCode
     ) {
-        String originalUrl = this.shortUrlService.getOriginalUrl(request.shortCode());
+        String originalUrl = this.shortUrlService.getOriginalUrl(shortCode);
 
-        return new GetOriginalUrlResponse(originalUrl);
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .location(URI.create(originalUrl))
+                .build();
     }
 }
