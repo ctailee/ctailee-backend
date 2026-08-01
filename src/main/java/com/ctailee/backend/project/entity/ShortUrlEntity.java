@@ -11,7 +11,7 @@ public class ShortUrlEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(
             name = "original_url",
@@ -52,7 +52,7 @@ public class ShortUrlEntity {
         this(originalUrl, shortCode, null);
     }
 
-    public Long getId(){
+    public Integer getId(){
         return this.id;
     }
 
