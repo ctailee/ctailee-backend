@@ -1,7 +1,9 @@
 package com.ctailee.backend.project.service;
 
 import com.ctailee.backend.project.textcipher.Pbkdf2AesGcmTextEncryptor;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TextCipherService {
 
     private final Pbkdf2AesGcmTextEncryptor textCipher;

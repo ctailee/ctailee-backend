@@ -2,6 +2,7 @@ package com.ctailee.backend.project.controller;
 
 import com.ctailee.backend.project.dto.response.ApiErrorResponse;
 import com.ctailee.backend.project.textcipher.EncryptionException;
+import com.ctailee.backend.project.urlshortener.ShortCodeNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,5 +37,16 @@ public class ProjectExceptionHandler {
                         Map.of()
                 )
         );
+    }
+
+    @ExceptionHandler(ShortCodeNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleShortCodeNotFoundException(ShortCodeNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ApiErrorResponse(
+                        exception.getMessage(),
+                        Map.of()
+                )
+        );
+
     }
 }
