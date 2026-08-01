@@ -1,7 +1,7 @@
 package com.ctailee.backend.project.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Null;
+import org.hibernate.type.NumericBooleanConverter;
 
 import java.time.LocalDateTime;
 
@@ -40,6 +40,14 @@ public class ShortUrlEntity {
     )
     private LocalDateTime expiresAt;
 
+    @Column(
+            name = "is_active",
+            nullable = false,
+            insertable = false
+    )
+    @Convert(converter = NumericBooleanConverter.class)
+    private boolean isActive = true;
+
     protected ShortUrlEntity(){}
 
     public ShortUrlEntity(String originalUrl, String shortCode, LocalDateTime expiresAt){
@@ -71,4 +79,8 @@ public class ShortUrlEntity {
     public LocalDateTime getExpiresAt(){
         return this.expiresAt;
     }
+
+    public boolean isActive(){ return this.isActive; }
+
+    public void deactivate(){ this.isActive = false; }
 }

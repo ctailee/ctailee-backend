@@ -36,10 +36,22 @@ public class ShortUrlService {
         return entity;
     }
 
+    @Transactional(dontRollbackOn = ShortCodeNotFoundException.class)
     public String getOriginalUrl(String shortCode){
         ShortUrlEntity entity = this.repository.findByShortCode(shortCode).orElseThrow(
                 () -> new ShortCodeNotFoundException(shortCode)
         );
+
+        LocalDateTime expiresAt = entity.getExpiresAt();
+
+        if (expiresAt != null && expiresAt.isBefore(LocalDateTime.now())){
+            entity.deactivate();
+            throw new ShortCodeNotFoundException(shortCode);
+        }
+
+        if (!entity.isActive()){
+            throw new ShortCodeNotFoundException(shortCode);
+        }
 
         return entity.getOriginalUrl();
     }
