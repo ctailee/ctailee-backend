@@ -5,6 +5,8 @@ services:
     # 對應 CI 的 ghcr.io/${GITHUB_REPOSITORY,,}；tag 為 latest 或 commit SHA 前 7 碼。
     # 例如：IMAGE_TAG=abcdef0 docker compose up -d --no-build
     image: ghcr.io/ctailee/ctailee-backend:${IMAGE_TAG:-latest}
+    pull_policy: always
+    
     ports:
       - "8080:8080"
     volumes:
