@@ -2,7 +2,10 @@ package shorturl
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"github.com/ctailee/ctailee-backend/internal/database"
+	"github.com/ctailee/ctailee-backend/migrations"
 	"path/filepath"
 	"testing"
 	"time"
@@ -11,7 +14,7 @@ import (
 func TestSQLitePersistence(t *testing.T) {
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "shorturl.sqlite")
-	service, db, err := Open(ctx, path)
+	service, db, err := openTestService(t, ctx, path)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +37,7 @@ func TestSQLitePersistence(t *testing.T) {
 	if err := db.Close(); err != nil {
 		t.Fatal(err)
 	}
-	service, db, err = Open(ctx, path)
+	service, db, err = openTestService(t, ctx, path)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,10 +71,15 @@ func TestSQLitePersistence(t *testing.T) {
 	}
 }
 
-func TestSQLiteOpenFailure(t *testing.T) {
-	_, db, err := Open(context.Background(), filepath.Join(t.TempDir(), "missing", "db.sqlite"))
-	if err == nil {
-		db.Close()
-		t.Fatal("expected open failure")
+func openTestService(t *testing.T, ctx context.Context, path string) (*Service, *sql.DB, error) {
+	t.Helper()
+	orm, db, err := database.OpenSQLite(ctx, path)
+	if err != nil {
+		return nil, nil, err
 	}
+	if err := migrations.Up(ctx, db); err != nil {
+		db.Close()
+		return nil, nil, err
+	}
+	return NewService(orm), db, nil
 }

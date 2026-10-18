@@ -10,8 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/ctailee/ctailee-backend/internal/config"
+	"github.com/ctailee/ctailee-backend/internal/database"
 	"github.com/ctailee/ctailee-backend/internal/project/shorturl"
 	"github.com/ctailee/ctailee-backend/internal/project/textcipher"
+	"github.com/ctailee/ctailee-backend/migrations"
 )
 
 func main() {
@@ -20,12 +22,16 @@ func main() {
 		log.Fatalf("failed to create data directory: %v", err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	shortURLService, db, err := shorturl.Open(ctx, databasePath)
-	cancel()
+	orm, db, err := database.OpenSQLite(ctx, databasePath)
 	if err != nil {
-		log.Fatalf("failed to open short URL database: %v", err)
+		log.Fatalf("failed to open database: %v", err)
 	}
 	defer db.Close()
+	if err := migrations.Up(ctx, db); err != nil {
+		log.Fatalf("failed to migrate database: %v", err)
+	}
+	cancel()
+	shortURLService := shorturl.NewService(orm)
 
 	r := gin.Default()
 	r.Use(config.CORS())

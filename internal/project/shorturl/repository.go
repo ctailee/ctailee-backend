@@ -2,41 +2,17 @@ package shorturl
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
-	gormsqlite "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"modernc.org/sqlite"
-
-	"github.com/ctailee/ctailee-backend/migrations"
 )
 
 type sqliteRepository struct{ db *gorm.DB }
 
-// Open opens SQLite and applies pending versioned SQL migrations.
-// The caller closes the returned connection pool.
-func Open(ctx context.Context, path string) (*Service, *sql.DB, error) {
-	db, err := sql.Open("sqlite", path)
-	if err != nil {
-		return nil, nil, err
-	}
-	// A single connection serializes writes and keeps connection settings consistent.
-	db.SetMaxOpenConns(1)
-	fail := func(err error) (*Service, *sql.DB, error) { db.Close(); return nil, nil, err }
-	if _, err := db.ExecContext(ctx, "PRAGMA busy_timeout = 5000"); err != nil {
-		return fail(err)
-	}
-	orm, err := gorm.Open(gormsqlite.New(gormsqlite.Config{DriverName: "sqlite", Conn: db}), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
-	if err != nil {
-		return fail(err)
-	}
-	if err := migrations.Up(ctx, db); err != nil {
-		return fail(err)
-	}
-
-	return newService(&sqliteRepository{db: orm}), db, nil
+// NewService creates a short URL service using a caller-owned database.
+func NewService(db *gorm.DB) *Service {
+	return newService(&sqliteRepository{db: db})
 }
 
 func (r *sqliteRepository) insert(ctx context.Context, entry shortURL) error {

@@ -1,6 +1,6 @@
 # ctailee-backend
 
-使用 Go、Gin 與 SQLite 的後端 API。
+使用 Go、Gin 的後端 API。
 
 ## 使用 Docker Compose 在本機執行
 
