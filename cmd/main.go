@@ -31,7 +31,7 @@ func main() {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 	cancel()
-	shortURLService := shorturl.NewService(orm)
+	shortURLService := shorturl.New(orm)
 
 	r := gin.Default()
 	r.Use(config.CORS())

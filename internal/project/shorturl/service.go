@@ -6,6 +6,8 @@ import (
 	"errors"
 	"math/big"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var (
@@ -22,22 +24,19 @@ type shortURL struct {
 	IsActive    bool
 }
 
-func (shortURL) TableName() string { return "short_urls" }
-
-type repository interface {
-	insert(context.Context, shortURL) error
-	find(context.Context, string) (shortURL, error)
-	deactivate(context.Context, string) error
-}
-
 type Service struct {
 	repository   repository
 	now          func() time.Time
 	generateCode func() (string, error)
 }
 
-func newService(repository repository) *Service {
-	return &Service{repository: repository, now: time.Now, generateCode: generateShortCode}
+// New creates a short URL service using a caller-owned database.
+func New(db *gorm.DB) *Service {
+	return &Service{
+		repository:   &sqliteRepository{db: db},
+		now:          time.Now,
+		generateCode: generateShortCode,
+	}
 }
 
 func (s *Service) Create(ctx context.Context, originalURL string) (string, error) {

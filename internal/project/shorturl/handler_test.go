@@ -15,7 +15,7 @@ func TestRoutes(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	repo := &memoryRepository{entries: map[string]shortURL{}}
 	router := gin.New()
-	RegisterRoutes(router.Group("/project"), newService(repo))
+	RegisterRoutes(router.Group("/project"), &Service{repository: repo, now: time.Now, generateCode: generateShortCode})
 	call := func(method, path, body string, status int) *httptest.ResponseRecorder {
 		t.Helper()
 		request := httptest.NewRequest(method, "/project/shorturl/"+path, bytes.NewBufferString(body))

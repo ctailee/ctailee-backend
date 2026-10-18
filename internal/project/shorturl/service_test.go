@@ -45,7 +45,7 @@ func (r *memoryRepository) deactivate(_ context.Context, code string) error {
 func TestServiceLifecycle(t *testing.T) {
 	ctx := context.Background()
 	repo := &memoryRepository{entries: map[string]shortURL{}}
-	service := newService(repo)
+	service := &Service{repository: repo, now: time.Now, generateCode: generateShortCode}
 	now := time.Date(2026, 10, 17, 12, 0, 0, 0, time.UTC)
 	service.now = func() time.Time { return now }
 	code, err := service.Create(ctx, "https://ctailee.com/")
@@ -94,7 +94,7 @@ func TestServiceLifecycle(t *testing.T) {
 func TestCollisionAndStorageErrors(t *testing.T) {
 	ctx := context.Background()
 	repo := &memoryRepository{entries: map[string]shortURL{"exists1": {}}}
-	service := newService(repo)
+	service := &Service{repository: repo, now: time.Now, generateCode: generateShortCode}
 	attempts := 0
 	service.generateCode = func() (string, error) {
 		attempts++

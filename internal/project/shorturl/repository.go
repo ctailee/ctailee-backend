@@ -8,12 +8,13 @@ import (
 	"modernc.org/sqlite"
 )
 
-type sqliteRepository struct{ db *gorm.DB }
-
-// NewService creates a short URL service using a caller-owned database.
-func NewService(db *gorm.DB) *Service {
-	return newService(&sqliteRepository{db: db})
+type repository interface {
+	insert(context.Context, shortURL) error
+	find(context.Context, string) (shortURL, error)
+	deactivate(context.Context, string) error
 }
+
+type sqliteRepository struct{ db *gorm.DB }
 
 func (r *sqliteRepository) insert(ctx context.Context, entry shortURL) error {
 	entry.ID = 0

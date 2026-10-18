@@ -81,5 +81,5 @@ func openTestService(t *testing.T, ctx context.Context, path string) (*Service, 
 		db.Close()
 		return nil, nil, err
 	}
-	return NewService(orm), db, nil
+	return New(orm), db, nil
 }
